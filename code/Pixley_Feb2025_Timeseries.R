@@ -64,11 +64,19 @@ random_y <- rnorm(100, mean = 0)
 data <- data.frame(x, random_y)
 PixleyRain
 colnames(PixleyRain)<-c("Date","Rain")
-x<-PixleyRain$Date
-y<-PixleyRain$Rain
+x<-PixleyWell$Date.and.Time
+y<-PixleyWell$ft..below.ground.
 fig <- plot_ly(PixleyRain, x = x, y = y, type = 'scatter', mode = 'lines')
 
 fig
+
+#Trying to install dash so I can export plotly as a pdf or svg file
+install.packages("remotes")
+install.packages("devtools")
+devtools::install_github("plotly/dash-html-components")
+library(dash)
+
+
 
 
 

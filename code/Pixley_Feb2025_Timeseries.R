@@ -13,12 +13,11 @@ head(PixleyWell)
 PixleyWell$Date<-format(PixleyWell$Date.and.Time,format="%Y-%m-%d")
 PixleyWell$Date<-as.Date(PixleyWell$Date)
 PixleyWell$Date.and.Time<-as.POSIXct(PixleyWell$Date.and.Time,format="%Y-%m-%d %H:%M:%S")
-PixleyWell<-PixleyWell[PixleyWell$Date.and.Time>="2024-12-12",]
+PixleyWell<-PixleyWell[PixleyWell$Date.and.Time>="2024-12-15",]
 DailyPixleyWell<-aggregate(ft..below.ground.~Date,PixleyWell, FUN=mean)
-#read in E5 rainfall
+#read in rainfall
 PixleyRain<-read.csv("data/raw/Pixley/Pixley_Tulare Rain Gauge Rain Gauge 20241201-20250214.csv")
 head(PixleyRain)
-
 #change to date format
 PixleyRain$Date<-as.Date(PixleyRain$Date,format="%Y-%m-%d (%a)")
 #merge
@@ -32,14 +31,14 @@ g1 <- ggplot(PixleyRain, aes(x=Date)) +
   scale_y_reverse(labels=scaleFUN)+ylab("Rainfall (Inches)")+
   theme(title =element_text(size=14, face='bold'),
         axis.text.x     = element_blank(),
-        axis.title.y = element_text(size=14),
+        axis.title.y = element_text(size=13),
         axis.text.y = element_text(size=14),
         axis.title.x    = element_blank(),
         axis.ticks.x    = element_blank())
 
 g2 <- ggplot(PixleyWell, aes(x=Date.and.Time)) +
   geom_line( aes(y=ft..below.ground.), size=1) +
-  ylab("Groundwater Depth")+
+  ylab("Groundwater Depth (Feet)")+
   theme_bw()+ scale_y_reverse()+
   theme(axis.title.y = element_text(size=14, face='bold'),
         legend.title    = element_blank(),
@@ -53,4 +52,26 @@ maxWidth = unit.pmax(g1$widths[2:3], g2$widths[2:3])
 g1$widths[2:3] <- maxWidth
 g2$widths[2:3] <- maxWidth
 grid.arrange(g1,g2, ncol = 1, heights = c(1, 3))
+
+ggsave("figures/Pixley_2025WY_Hydrograph.png", width = 20, height = 20, units = "cm")
+
+#Now try with Plotly
+
+library(plotly)
+
+x <- c(1:100)
+random_y <- rnorm(100, mean = 0)
+data <- data.frame(x, random_y)
+PixleyRain
+colnames(PixleyRain)<-c("Date","Rain")
+x<-PixleyRain$Date
+y<-PixleyRain$Rain
+fig <- plot_ly(PixleyRain, x = x, y = y, type = 'scatter', mode = 'lines')
+
+fig
+
+
+
+
+
 
